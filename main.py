@@ -42,14 +42,14 @@ async def send_welcome(message: types.Message):
 
 @dp.message(F.text.lower() == 'start')
 async def start_bot(message: types.Message, bot: Bot):
-    scheduler.add_job(repeat_click_on_button, 'interval', minutes=30, id='my_job', args=(bot, message.from_user.id))
+    scheduler.add_job(repeat_click_on_button, 'interval', minutes=3, id='my_job', args=(bot, message.from_user.id))
 
 
 @dp.message(F.text.lower() == 'help')
 async def send_msg_help(message: types.Message):
     await message.reply(
         "This bot for check availability of appointment time for submitting documents "
-        "to 'Pomorskim Urzędzie Wojewódzkim w Gdańsku'. "
+        "to 'Pomorski Urząd Wojewódzki w Gdańsku'. "
         "For use this bot just click 'START'")
 
 
