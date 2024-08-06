@@ -13,7 +13,7 @@ def click_on_button():
     options.add_argument("--headless")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+    driver = webdriver.Chrome(service=Service(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options))
     try:
         driver.get("https://kolejka.gdansk.uw.gov.pl/branch/5")
     except Exception as e:
