@@ -8,11 +8,11 @@ from selenium.webdriver.common.by import By
 
 def click_on_button():
     options = webdriver.ChromeOptions()
-    options.binary_location = r"/app/.chromedriver/bin/chromedriver"
+    options.binary_location =  os.environ.get("GOOGLE_CHROME_BIN")
     options.add_argument("--headless")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(service=Service(executable_path='/app/.chromedriver/bin/chromedriver', options=options))
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
     try:
         driver.get("https://kolejka.gdansk.uw.gov.pl/branch/5")
     except Exception as e:
