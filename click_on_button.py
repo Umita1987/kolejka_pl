@@ -7,6 +7,8 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 
 
+load_dotenv()
+
 def click_on_button():
     options = webdriver.ChromeOptions()
     options.binary_location =  os.getenv('GOOGLE_CHROME_BIN')
