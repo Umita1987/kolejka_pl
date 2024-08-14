@@ -9,8 +9,6 @@ from aiogram.filters import CommandStart
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
-import uuid
-
 
 from click_on_button import click_on_button
 
@@ -20,7 +18,6 @@ token = os.getenv('TOKEN')
 dp = Dispatcher()
 
 scheduler = AsyncIOScheduler()
-job_id = f"my_job_{uuid.uuid4()}"
 
 async def repeat_click_on_button(bot, chat_id):
     data = click_on_button()
@@ -44,7 +41,7 @@ async def send_welcome(message: types.Message):
 
 @dp.message(F.text.lower() == 'start')
 async def start_bot(message: types.Message, bot: Bot):
-    scheduler.add_job(repeat_click_on_button, 'interval', minutes=3, id=job_id, args=(bot, message.from_user.id))
+    scheduler.add_job(repeat_click_on_button, 'interval', minutes=3, id=from_user.id, args=(bot, message.from_user.id))
 
 
 @dp.message(F.text.lower() == 'help')
