@@ -20,7 +20,7 @@ token = os.getenv('TOKEN')
 dp = Dispatcher()
 
 scheduler = AsyncIOScheduler()
-job_id = f'my_job_{uuid.uuid4()}'
+job_id = f"my_job_{uuid.uuid4()}"
 
 async def repeat_click_on_button(bot, chat_id):
     data = click_on_button()
@@ -57,7 +57,7 @@ async def send_msg_help(message: types.Message):
 
 @dp.message(F.text.lower() == 'stop')
 async def stop_bot(message: types.Message):
-    scheduler.remove_job('my_job')
+    scheduler.remove_job('job_id')
     await message.reply("Bot is stopped. For continuation, pleas, click 'START'")
 
 
