@@ -41,7 +41,7 @@ async def send_welcome(message: types.Message):
 
 @dp.message(F.text.lower() == 'start')
 async def start_bot(message: types.Message, bot: Bot):
-    scheduler.add_job(repeat_click_on_button, 'interval', minutes=3, id=from_user.id, args=(bot, message.from_user.id))
+    scheduler.add_job(repeat_click_on_button, 'interval', minutes=3, id=my_job, args=(bot, message.from_user.id))
 
 
 @dp.message(F.text.lower() == 'help')
@@ -54,7 +54,7 @@ async def send_msg_help(message: types.Message):
 
 @dp.message(F.text.lower() == 'stop')
 async def stop_bot(message: types.Message):
-    scheduler.remove_job('job_id')
+    scheduler.remove_job('my_job')
     await message.reply("Bot is stopped. For continuation, pleas, click 'START'")
 
 
