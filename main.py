@@ -19,7 +19,6 @@ token = os.getenv('TOKEN')
 dp = Dispatcher()
 scheduler = AsyncIOScheduler()
 
-# Словарь для хранения job_id каждого пользователя
 user_jobs = {}
 
 
@@ -50,9 +49,8 @@ async def start_bot(message: types.Message, bot: Bot):
     
     # Сохранение job_id в словарь
     user_jobs[message.from_user.id] = job_id
-    
-    scheduler.add_job(repeat_click_on_button, 'interval', minutes=2, id=job_id, args=(bot, message.from_user.id))
-    await message.reply("Bot started! It will check every 2 minutes.")
+    scheduler.add_job(repeat_click_on_button, 'interval', minutes=30, id=job_id, args=(bot, message.from_user.id))
+    await message.reply("Bot started! It will check every 30 minutes.")
 
 
 @dp.message(F.text.lower() == 'help')
@@ -60,13 +58,11 @@ async def send_msg_help(message: types.Message):
     await message.reply(
         "This bot for check availability of appointment time for submitting documents "
         "to 'Pomorskim Urzędzie Wojewódzkim w Gdańsku'. "
-        "For use this bot just click 'START'"
-    )
+        "For use this bot just click 'START'")
 
 
 @dp.message(F.text.lower() == 'stop')
 async def stop_bot(message: types.Message):
-    # Получаем job_id пользователя
     job_id = user_jobs.get(message.from_user.id)
     
     if job_id:
@@ -77,6 +73,15 @@ async def stop_bot(message: types.Message):
     else:
         await message.reply("No active job found. Please start the bot first.")
 
+@dp.message(lambda message: message.text.lower() not in ['start', 'help', 'stop'])
+async def send_msg_about_incorrect_msg(message: types.Message):
+    kb = [
+        [KeyboardButton(text='START'), KeyboardButton(text='HELP'), KeyboardButton(text='STOP')],
+    ]
+    keyboard = ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
+    await message.reply("Sorry, i did not understand you:( Let's try again. Choose one of the buttons below",
+                        reply_markup=keyboard)
 
-if name == "main":
+
+if __name__ == "__main__":
     asyncio.run(main())
