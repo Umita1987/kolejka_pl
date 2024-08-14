@@ -58,14 +58,5 @@ async def stop_bot(message: types.Message):
     await message.reply("Bot is stopped. For continuation, pleas, click 'START'")
 
 
-@dp.message(F.text.lower() not in ['start', 'help', 'stop'])
-async def send_msg_incorrect(message: types.Message):
-    kb = [
-        [KeyboardButton(text='START'), KeyboardButton(text='HELP'), KeyboardButton(text='STOP')],
-    ]
-    keyboard = ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
-    await message.reply("Sorry, I didn't understand you. Let's try again", reply_markup=keyboard)
-
-
 if __name__ == "__main__":
     asyncio.run(main())
