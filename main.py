@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import uuid
 
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.client.default import DefaultBotProperties
@@ -16,8 +17,11 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv()
 token = os.getenv('TOKEN')
 dp = Dispatcher()
-
 scheduler = AsyncIOScheduler()
+
+# Словарь для хранения job_id каждого пользователя
+user_jobs = {}
+
 
 async def repeat_click_on_button(bot, chat_id):
     data = click_on_button()
@@ -41,30 +45,38 @@ async def send_welcome(message: types.Message):
 
 @dp.message(F.text.lower() == 'start')
 async def start_bot(message: types.Message, bot: Bot):
-    scheduler.add_job(repeat_click_on_button, 'interval', minutes=30, id='my_job', args=(bot, message.from_user.id))
+    # Генерация уникального job_id для каждого пользователя
+    job_id = f"my_job_{message.from_user.id}_{uuid.uuid4()}"
+    
+    # Сохранение job_id в словарь
+    user_jobs[message.from_user.id] = job_id
+    
+    scheduler.add_job(repeat_click_on_button, 'interval', minutes=2, id=job_id, args=(bot, message.from_user.id))
+    await message.reply("Bot started! It will check every 2 minutes.")
 
 
 @dp.message(F.text.lower() == 'help')
 async def send_msg_help(message: types.Message):
     await message.reply(
         "This bot for check availability of appointment time for submitting documents "
-        "to 'Pomorski Urząd Wojewódzki w Gdańsku'. "
-        "For use this bot just click 'START'")
+        "to 'Pomorskim Urzędzie Wojewódzkim w Gdańsku'. "
+        "For use this bot just click 'START'"
+    )
 
 
 @dp.message(F.text.lower() == 'stop')
 async def stop_bot(message: types.Message):
-    scheduler.remove_job('my_job')
-    await message.reply("Bot is stopped. For continuation, pleas, click 'START'")
+    # Получаем job_id пользователя
+    job_id = user_jobs.get(message.from_user.id)
+    
+    if job_id:
+        scheduler.remove_job(job_id)
+        await message.reply("Bot is stopped. For continuation, please, click 'START'")
+        # Удаляем job_id из словаря
+        del user_jobs[message.from_user.id]
+    else:
+        await message.reply("No active job found. Please start the bot first.")
 
-@dp.message(lambda message: message.text.lower() not in ['start', 'help', 'stop'])
-async def send_msg_about_incorrect_msg(message: types.Message):
-    kb = [
-        [KeyboardButton(text='START'), KeyboardButton(text='HELP'), KeyboardButton(text='STOP')],
-    ]
-    keyboard = ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True)
-    await message.reply("Sorry, i did not understand you:( Let's try again. Choose one of the buttons below",
-                        reply_markup=keyboard)
 
-if __name__ == "__main__":
+if name == "main":
     asyncio.run(main())
